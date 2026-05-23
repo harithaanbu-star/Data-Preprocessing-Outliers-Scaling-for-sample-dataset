@@ -1,21 +1,19 @@
-# Water-Quality-Potability-Prediction
-# 🚀 Day 5 — AI Internship Journey
+# Data Preprocessing Practice
+# 🚀 Day 3 — AI Internship Journey
 
 ## 📌 Project Overview
-This repository contains my Day 5 learning progress during my AI Internship.
-I explored:
-- Real-world Water Quality Dataset (fetched from **Snowflake Cloud Database**)
-- Missing Value Imputation
+This repository contains my Day 3 learning progress during my AI Internship.
+I explored end-to-end **Data Preprocessing** techniques using a sample Employee dataset,
+covering:
+- Missing Value Detection & Visualization
 - Outlier Detection & Treatment
-- Feature Engineering with Log Transformation
-- Machine Learning Classification using **Support Vector Machine (SVM)**
-
-Dataset used:
-- Water Potability Dataset (`WATER` table from Snowflake — `DB1.PUBLIC.WATER`)
+- Feature Scaling & Normalization
+- Feature Encoding
+- Statistical Analysis
 
 ---
 
-# 🛠 Technologies Used
+## 🛠 Technologies Used
 - Python
 - Pandas
 - NumPy
@@ -23,98 +21,178 @@ Dataset used:
 - Seaborn
 - Scikit-learn
 - SciPy
-- Snowflake Connector
-- Google Colab
+- Missingno
+- Jupyter Notebook
 
 ---
 
-# 📊 Topics Practiced
+## 📊 Topics Practiced
 
-## ✅ Data Collection
-- Connected to **Snowflake Cloud Data Warehouse** using `snowflake.connector`
-- Fetched water quality data using SQL query
-- Loaded data into a Pandas DataFrame
+### ✅ Dataset Overview
+- Loaded and explored the Employee dataset
+- Checked shape, structure, data types
+- Identified missing values and basic statistics
 
-## ✅ Data Handling & Cleaning
-- Checked dataset shape, structure, data types
-- Identified and handled missing values using `SimpleImputer` (mean strategy)
-- Columns imputed: `PH`, `SULFATE`, `TRIHALOMETHANES`
-- Removed duplicate records
+### ✅ Missing Value Visualization
+Three visualization techniques practiced:
+- **Bar Chart** — shows completeness of each column
+- **Matrix Plot** — shows missing value patterns across rows
+- **Heatmap** — highlights missing locations using coolwarm and viridis colormaps
 
-## ✅ Outlier Treatment
-- Detected outliers using **Boxplots**
-- Applied **Winsorization** (5% on both tails) using `scipy.stats.mstats.winsorize`
-- Applied **Log Transformation** (`np.log1p`) for normalization
+### ✅ Missing Value Treatment
 
-## ✅ Exploratory Data Analysis (EDA)
-- Boxplots for all original features
-- Scatter plots for feature relationships
-- Boxplots for log-transformed features
-- Correlation heatmap via Confusion Matrix visualization
+| Column | Strategy Used |
+|--------|--------------|
+| Age | Filled with Mean |
+| Gender | Filled with Mode |
+| Salary | Filled with Mean |
 
-## ✅ Machine Learning
-- **Model**: Support Vector Classifier (SVC) with Linear Kernel
-- **Train-Test Split**: 80% train / 20% test (`random_state=42`)
-- **Target Variable**: `POTABILITY` (0 = Not Potable, 1 = Potable)
-- **Evaluation Metrics**:
-  - Accuracy Score
-  - Confusion Matrix
-  - Classification Report (Precision, Recall, F1-Score)
+Also practiced using **Scikit-learn SimpleImputer** with:
+- Median strategy for Age
+- Mean strategy for Salary
+- Most Frequent strategy for Gender
 
-## ✅ Visualization Techniques
-### Matplotlib
-- Bar Chart (Actual vs Predicted values)
-- Scatter Plots (Feature relationships)
-### Seaborn
-- Boxplots (Outlier detection)
-- Heatmap (Confusion Matrix with annotations)
+### ✅ Outlier Detection
+Multiple methods used to detect outliers:
+
+**1. IQR Method (Interquartile Range)**
+- Calculated lower and upper bounds using Q1 and Q3
+- Identified Row 6 (Grace, Age=120) as outlier
+
+**2. Z-Score Method**
+- Used SciPy zscore function
+- Threshold adjusted between 2.5 to 3.0 based on dataset size
+- Grace (Age=120) detected as outlier
+
+**3. Isolation Forest**
+- Machine learning based outlier detection
+- contamination parameter set to 0.1
+- Output: -1 represents outlier rows, +1 represents normal rows
+
+**4. Boxplot Visualization**
+- Vertical boxplot for visual outlier inspection
+- Horizontal boxplot for alternative view
+
+### ✅ Outlier Treatment
+
+**Method 1 — Winsorization using SciPy**
+- Applied 5% limits on both tails
+- Extreme values replaced with boundary values
+
+**Method 2 — Clipping without library**
+- Used quantile-based lower and upper bounds
+- Age values clipped between 29.5 and 40.0
+
+### ✅ Feature Transformation
+
+**Log Transformation**
+- Applied NumPy log to reduce skewness
+- Compresses large values effectively
+
+**Power Transformation — Yeo-Johnson**
+- Works with both positive and negative values
+- Makes data more Gaussian-like
+
+**Power Transformation — Box-Cox**
+- Works only with positive values
+- Applied using both Scikit-learn and SciPy
+
+### ✅ Feature Scaling
+
+**Standard Scaler (Standardization)**
+- Scales values to mean=0 and standard deviation=1
+- Output range approximately -1 to +1
+- Best for most Machine Learning algorithms
+
+**Min-Max Scaler (Normalization)**
+- Scales values strictly between 0 and 1
+- Useful when algorithm requires bounded input
+
+### ✅ Feature Encoding
+
+**Label Encoding**
+- Converts categories to numeric labels
+- F becomes 0, M becomes 1
+- Suitable for binary or ordinal categories
+
+**One-Hot Encoding (Dense)**
+- Creates separate binary column for each category
+- sparse_output=False returns easy-to-read array
+- Suitable for nominal categories
+
+**One-Hot Encoding (Sparse)**
+- Returns sparse matrix format
+- Memory efficient for large datasets
+- Stores only non-zero values
+
+**Pandas Get Dummies**
+- Quick one-hot encoding using Pandas
+- drop_first=True avoids multicollinearity
+- Returns True/False boolean columns
+
+**Ordinal Encoding**
+- Assigns ordered numeric values to categories
+- Suitable when category order matters
 
 ---
 
-# 📈 Learning Outcome
-Through this project, I learned:
-- How to connect and fetch data from **Snowflake** cloud data warehouse using Python
-- How to handle real-world missing data using `SimpleImputer`
-- How to detect and treat outliers using **Winsorization** and **Log Transformation**
-- How to build and evaluate an **SVM classification model**
-- How to interpret a **Confusion Matrix** and **Classification Report**
-- How to visualize actual vs predicted results
+## 📁 Dataset Description
+
+| Column | Type | Description |
+|--------|------|-------------|
+| Name | Object | Employee name |
+| Age | Float | Employee age — had missing and outlier values |
+| Gender | Object | Employee gender — had missing value |
+| Salary | Float | Employee salary — had missing value |
+| Department | Object | Department name |
+
+**Missing Values Found:**
+- Age — 1 missing value
+- Gender — 1 missing value
+- Salary — 1 missing value
+
+**Outlier Found:**
+- Row 6 (Grace) — Age = 120
+- Detected by IQR, Z-Score, and Isolation Forest
 
 ---
 
-# 📂 Files Included
+## 🔍 Key Observations
 
-| File | Description |
-|------|-------------|
-| `Water_Quality_Day5.ipynb` | Google Colab notebook |
-| `README.md` | Project documentation |
-
-> 📌 Dataset is fetched directly from **Snowflake Cloud** (`DB1.PUBLIC.WATER`) — no local CSV file needed.
-
----
-
-# 🔍 Key Features in Dataset
-
-| Feature | Description |
-|---------|-------------|
-| `PH` | pH level of water |
-| `HARDNESS` | Calcium & magnesium concentration |
-| `SOLIDS` | Total dissolved solids (ppm) |
-| `CHLORAMINES` | Chloramines concentration (ppm) |
-| `SULFATE` | Sulfate concentration (mg/L) |
-| `CONDUCTIVITY` | Electrical conductivity (μS/cm) |
-| `ORGANIC_CARBON` | Organic carbon content (ppm) |
-| `TRIHALOMETHANES` | Trihalomethanes concentration (μg/L) |
-| `TURBIDITY` | Turbidity level (NTU) |
-| `POTABILITY` | Target — 1: Potable, 0: Not Potable |
+| Observation | Detail |
+|-------------|--------|
+| Dataset Size | 10 rows × 5 columns |
+| Missing Values | 1 each in Age, Gender, Salary |
+| Outlier Detected | Grace — Age = 120 |
+| Age After Clipping | Capped between 29.5 and 40.0 |
+| Best Encoding for Binary | Label Encoding or Get Dummies |
+| Best Scaling for ML | StandardScaler |
+| Best for Skewed Data | Log or Box-Cox Transformation |
 
 ---
 
-# 🎯 Internship Progress
-This is **Day 5** of my AI & Machine Learning journey.
-I will continue uploading my daily learning progress, projects, and experiments throughout the internship.
+## 📈 Learning Outcome
+
+Through this practice, I learned:
+- How to identify and visualize missing values using missingno and seaborn
+- How to impute missing values using mean, median, and mode strategies
+- How to detect outliers using IQR, Z-Score, and Isolation Forest
+- How to treat outliers using Winsorization and Clipping
+- How to reduce skewness using Log, Box-Cox, and Yeo-Johnson transformations
+- How to scale features using StandardScaler and MinMaxScaler
+- How to encode categorical variables using multiple encoding strategies
+- Differences between Label Encoding, One-Hot Encoding, and Ordinal Encoding
 
 ---
 
-# ⭐ Connect With Me
+## 🎯 Internship Progress
+
+This is **Day 3** of my AI and Machine Learning journey.
+I will continue uploading my daily learning progress,
+projects, and experiments throughout the internship.
+
+---
+
+## ⭐ Connect With Me
+
 Feel free to explore the repository and follow my learning journey.
